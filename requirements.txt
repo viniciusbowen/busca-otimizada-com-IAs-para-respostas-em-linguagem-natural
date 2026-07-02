@@ -1,0 +1,19 @@
+# Processamento de dados
+numpy
+pandas
+pyarrow
+
+# IA / NLP
+scikit-learn
+nltk
+gensim
+sentence-transformers
+torch
+transformers
+
+# Busca semântica e indexação
+faiss-cpu
+hnswlib
+
+# Interface web
+streamlit

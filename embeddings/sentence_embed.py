@@ -1,0 +1,59 @@
+"""Embeddings via Sentence Transformers.
+
+Estratégia "Sentence Embeddings": usa um modelo pré-treinado que mapeia
+sentenças inteiras para vetores densos, capturando melhor a semântica do
+que a simples média de vetores de palavras.
+"""
+
+from __future__ import annotations
+
+from typing import Iterable
+
+import numpy as np
+
+from tf import config
+from tf.embeddings.base import BaseEmbedder
+
+
+class SentenceEmbedder(BaseEmbedder):
+    """Gera embeddings de sentenças com Sentence Transformers."""
+
+    name = "sentence_embeddings"
+
+    def __init__(self, model_name: str = config.SENTENCE_MODEL_NAME) -> None:
+        """Configura o modelo de embeddings.
+
+        Args:
+            model_name: Nome do modelo no Hugging Face / Sentence Transformers.
+        """
+        self.model_name = model_name
+        self._model = None
+        self._dim: int | None = None
+
+    def fit(self, corpus: Iterable[str] | None = None) -> "SentenceEmbedder":
+        """Carrega o modelo pré-treinado (não há treinamento próprio).
+
+        Args:
+            corpus: Ignorado; presente apenas por compatibilidade de interface.
+
+        Returns:
+            A própria instância.
+        """
+        raise NotImplementedError("Carregar o modelo Sentence Transformers.")
+
+    def embed_text(self, text: str) -> np.ndarray:
+        """Gera o embedding de um único texto.
+
+        Complexidade: O(m) no comprimento do texto (custo do forward do modelo).
+        """
+        raise NotImplementedError("Codificar um texto com Sentence Transformers.")
+
+    def embed_batch(self, texts: Iterable[str]) -> np.ndarray:
+        """Gera embeddings para um lote de textos (encode em batch)."""
+        raise NotImplementedError("Codificar textos em lote.")
+
+    @property
+    def dim(self) -> int:
+        if self._dim is None:
+            raise RuntimeError("Modelo ainda não carregado; chame fit() primeiro.")
+        return self._dim

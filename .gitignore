@@ -1,0 +1,67 @@
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribuição / empacotamento
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Dados baixados / gerados (grandes)
+data_files/
+*.parquet
+*.csv
+*.tsv
+*.zip
+*.tar.gz
+
+# Modelos e embeddings gerados
+*.bin
+*.npy
+*.npz
+*.pt
+*.pth
+*.model
+*.index
+*.faiss
+
+# Cache de bibliotecas de NLP
+nltk_data/
+.cache/
+.gensim/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testes / cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs e variáveis de ambiente
+*.log
+.env
+.env.local

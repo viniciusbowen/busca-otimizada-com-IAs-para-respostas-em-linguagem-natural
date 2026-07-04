@@ -17,6 +17,7 @@ geração de texto por um **LLM local**.
 - Miguel Carvalho de Medeiros — 211068341
 - Luca Valderramos Cirino — 211066140
 - Luisa Ribeiro de Oliveira — 241024197
+- Gustavo de Paula Ávila - 212006871
 
 ## Fluxo do sistema
 

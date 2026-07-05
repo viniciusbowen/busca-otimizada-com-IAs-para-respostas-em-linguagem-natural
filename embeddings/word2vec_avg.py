@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Iterable
 
 import numpy as np
+from gensim.models import Word2Vec
 
 from tf import config
 from tf.embeddings.base import BaseEmbedder
@@ -42,18 +43,52 @@ class Word2VecAverageEmbedder(BaseEmbedder):
 
         Complexidade: O(épocas * N * janela) no treinamento.
         """
-        raise NotImplementedError("Treinar Word2Vec com Gensim.")
+    
+        sentences = [text.lower().split() for text in corpus]
+
+        #criar e treinar o modelo Word2Vec com Gensim
+        self._model = Word2Vec(
+                                sentences=sentences,
+                                vector_size=self.vector_size,
+                                window=self.window,
+                                min_count=self.min_count,
+                                )
+        
+        return self
+        
+        #raise NotImplementedError("Treinar Word2Vec com Gensim.")
 
     def embed_text(self, text: str) -> np.ndarray:
         """Gera o embedding médio de um texto.
 
         Complexidade: O(m) no número de palavras do texto.
         """
-        raise NotImplementedError("Calcular a média dos vetores das palavras.")
+
+        if self._model is None:
+            raise RuntimeError("Moldelo deve ser treinado antes de gerar 'embeddings'.")
+
+        #tokeniza
+        tokens = text.lower().split()
+
+        #cria vetor
+        vectors = [self._model.wv[token] for token in tokens if token in self.model.wv]
+        
+        #caso vazio
+        if not vectors:
+            return np.zeros(self.vector_size)
+        
+        #media é suficiente para Word2Vec
+        return np.mean(vectors, axis=0)
+        
+        #raise NotImplementedError("Calcular a média dos vetores das palavras.")
 
     def embed_batch(self, texts: Iterable[str]) -> np.ndarray:
         """Gera embeddings médios para um lote de textos."""
-        raise NotImplementedError("Gerar embeddings médios em lote.")
+
+        embeddings = [self.embed_text(text) for text in texts]
+
+        return np.vstack(embeddings)
+        #raise NotImplementedError("Gerar embeddings médios em lote.")
 
     @property
     def dim(self) -> int:

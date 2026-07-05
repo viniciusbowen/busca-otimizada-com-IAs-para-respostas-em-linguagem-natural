@@ -72,6 +72,14 @@ def render_results(response) -> None:
     Args:
         response: Objeto :class:`tf.pipeline.PipelineResponse`.
     """
+    if response.search_query:
+        if response.search_query != response.question:
+            st.info(f"Consulta reescrita pelo LLM: **{response.search_query}**")
+        else:
+            st.caption(
+                f"Consulta de busca (LLM manteve a pergunta): _{response.search_query}_"
+            )
+
     st.subheader("Resposta")
     st.write(response.answer or "_(sem resposta gerada)_")
 

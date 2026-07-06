@@ -21,7 +21,6 @@ from busca.embeddings.word2vec_avg import Word2VecAverageEmbedder
 from busca.llm.generator import LocalLLM
 from busca.pipeline import SemanticSearchPipeline
 from busca.search.cosine_search import CosineSearcher
-from busca.search.faiss_search import FaissSearcher
 from busca.search.hnsw_search import HNSWSearcher
 
 # Mapas de nome -> classe para os seletores da interface. A primeira entrada
@@ -33,7 +32,6 @@ EMBEDDERS = {
 }
 SEARCHERS = {
     "Similaridade de Cosseno": CosineSearcher,
-    "FAISS": FaissSearcher,
     "HNSW": HNSWSearcher,
 }
 

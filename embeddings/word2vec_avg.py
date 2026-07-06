@@ -19,6 +19,7 @@ class Word2VecAverageEmbedder(BaseEmbedder):
     """Representa textos pela média dos vetores Word2Vec das palavras."""
 
     name = "word2vec_avg"
+    complexity = "embed: O(m·d) por texto; treino: O(épocas·N·janela·d)"
 
     def __init__(
         self,
@@ -71,7 +72,7 @@ class Word2VecAverageEmbedder(BaseEmbedder):
         tokens = text.lower().split()
 
         #cria vetor
-        vectors = [self._model.wv[token] for token in tokens if token in self.model.wv]
+        vectors = [self._model.wv[token] for token in tokens if token in self._model.wv]
         
         #caso vazio
         if not vectors:

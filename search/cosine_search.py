@@ -12,7 +12,7 @@ from typing import Any
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
-from search.base import BaseSearcher, SearchResult
+from tf.search.base import BaseSearcher, SearchResult
 
 
 class CosineSearcher(BaseSearcher):

@@ -14,8 +14,8 @@ import json
 
 import pandas as pd
 
-import config
-from data.download import ensure_dataset
+from tf import config
+from tf.data.download import ensure_dataset
 
 # Colunas esperadas no DataFrame unificado gerado por ``build_corpus``.
 CORPUS_COLUMNS = ["wiki_id", "title", "genres", "plot"]

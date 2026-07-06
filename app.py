@@ -90,15 +90,6 @@ def render_results(response) -> None:
                 st.caption("Gêneros: " + ", ".join(map(str, genres)))
             st.write(payload.get("plot", ""))
 
-
-def render_benchmark_tab() -> None:
-    """Renderiza a aba de benchmark comparando as técnicas de busca."""
-    st.info(
-        "Benchmark comparativo (tempo, complexidade e qualidade) ainda não "
-        "implementado nesta integração mínima."
-    )
-
-
 def main() -> None:
     """Monta a interface Streamlit."""
     st.set_page_config(page_title="Busca Semântica de Filmes (CMU)", layout="wide")
@@ -113,7 +104,7 @@ def main() -> None:
         searcher_name = st.selectbox("Técnica de busca", list(SEARCHERS))
         top_k = st.slider("Top-K resultados", 1, 20, config.TOP_K)
 
-    tab_search, tab_benchmark = st.tabs(["Busca", "Benchmark"])
+    (tab_search,) = st.tabs(["Busca"])
 
     with tab_search:
         question = st.text_input(
@@ -124,9 +115,6 @@ def main() -> None:
             pipeline = build_pipeline(embedder_name, searcher_name)
             response = pipeline.answer(question, top_k=top_k)
             render_results(response)
-
-    with tab_benchmark:
-        render_benchmark_tab()
 
 
 if __name__ == "__main__":

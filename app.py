@@ -116,7 +116,7 @@ def main() -> None:
             placeholder="Ex.: um filme sobre viagem no tempo e paradoxos",
         )
         if st.button("Buscar", type="primary") and question.strip():
-            pipeline = build_pipeline("Sentence Embeddings", "Similaridade de Cosseno")
+            pipeline = build_pipeline()
             response = pipeline.answer(question, top_k=top_k)
             render_results(response)
 

@@ -71,7 +71,7 @@ class SentenceEmbedder(BaseEmbedder):
         if self._model is None:
             raise RuntimeError("Modelo não carregado; chame fit() primeiro.")
 
-        documents = [text if isinstance(text, str) else "" for text in texts]
+        documents = list(texts)
         embeddings = self._model.encode(
             documents,
             convert_to_numpy=True,

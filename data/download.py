@@ -8,6 +8,8 @@ não exista.
 
 from __future__ import annotations
 
+import shutil
+import tarfile
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -47,10 +49,53 @@ def ensure_dataset(force: bool = False) -> Path:
         download_dataset(DATASET_URL, zip_path)
 
     config.DATA_DIR.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
-        zf.extractall(config.DATA_DIR)
+    _extract_archive(zip_path, config.DATA_DIR)
+    _normalize_dataset_dir()
 
     return config.DATASET_DIR
+
+
+def _extract_archive(archive_path: Path, destination: Path) -> None:
+    """Extrai um arquivo compactado, detectando se é ``tar``/``tar.gz`` ou ``zip``.
+
+    O dataset distribuído pela CMU vem como ``.tar.gz`` (mesmo quando o arquivo
+    local tem extensão ``.zip``), então detectamos o formato pelo conteúdo em vez
+    de confiar na extensão.
+
+    Args:
+        archive_path: Caminho do arquivo compactado.
+        destination: Diretório de destino da extração.
+    """
+    if tarfile.is_tarfile(archive_path):
+        with tarfile.open(archive_path) as tf:
+            tf.extractall(destination)
+        return
+
+    if zipfile.is_zipfile(archive_path):
+        with zipfile.ZipFile(archive_path) as zf:
+            zf.extractall(destination)
+        return
+
+    raise ValueError(
+        f"Formato de arquivo não reconhecido (nem tar nem zip): {archive_path}"
+    )
+
+
+def _normalize_dataset_dir() -> None:
+    """Garante que os arquivos fiquem em ``config.DATASET_DIR``.
+
+    O tarball da CMU extrai para uma pasta ``MovieSummaries``. Se o diretório
+    esperado ainda não existir, movemos/renomeamos a pasta extraída para o nome
+    configurado.
+    """
+    if config.METADATA_FILE.exists() and config.PLOT_SUMMARIES_FILE.exists():
+        return
+
+    extracted = config.DATA_DIR / "MovieSummaries"
+    if extracted.exists() and extracted != config.DATASET_DIR:
+        if config.DATASET_DIR.exists():
+            shutil.rmtree(config.DATASET_DIR)
+        shutil.move(str(extracted), str(config.DATASET_DIR))
 
 
 def download_dataset(url: str, destination: Path) -> Path:

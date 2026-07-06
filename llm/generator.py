@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import config
+from tf import config
 
 # Template de prompt para o padrão RAG. O contexto é preenchido com as
 # sinopses recuperadas e a pergunta original do usuário.

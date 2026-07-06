@@ -39,7 +39,12 @@ class SentenceEmbedder(BaseEmbedder):
         Returns:
             A própria instância.
         """
-        from sentence_transformers import SentenceTransformer
+        try:
+            from sentence_transformers import SentenceTransformer
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "Dependência opcional ausente: 'sentence-transformers'. Instale com `pip install sentence-transformers`."
+            ) from exc
 
         self._model = SentenceTransformer(self.model_name)
         self._dim = self._model.get_sentence_embedding_dimension()

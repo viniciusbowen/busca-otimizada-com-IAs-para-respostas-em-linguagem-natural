@@ -100,8 +100,12 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Configuração")
-        st.selectbox("Técnica de embedding", ["Sentence Embeddings"], index=0)
-        st.selectbox("Técnica de busca", ["Similaridade de Cosseno"], index=0)
+        embedder_name = st.selectbox(
+            "Técnica de embedding", ["Sentence Embeddings"], index=0
+        )
+        searcher_name = st.selectbox(
+            "Técnica de busca", ["Similaridade de Cosseno"], index=0
+        )
         top_k = st.slider("Top-K resultados", 1, 20, config.TOP_K)
 
     tab_search, tab_benchmark = st.tabs(["Busca", "Benchmark"])

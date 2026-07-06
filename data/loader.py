@@ -14,8 +14,8 @@ import json
 
 import pandas as pd
 
-from tf import config
-from tf.data.download import ensure_dataset
+from busca import config
+from busca.data.download import ensure_dataset
 
 # Colunas esperadas no DataFrame unificado gerado por ``build_corpus``.
 CORPUS_COLUMNS = ["wiki_id", "title", "genres", "plot"]
@@ -103,7 +103,7 @@ def build_corpus(save: bool = True) -> pd.DataFrame:
     """Une metadados e sinopses em um único corpus.
 
     Passos:
-    1. Garantir o dataset via :func:`tf.data.download.ensure_dataset`.
+    1. Garantir o dataset via :func:`busca.data.download.ensure_dataset`.
     2. Carregar metadados e sinopses.
     3. Fazer o *join* por ``wiki_id``.
     4. Opcionalmente persistir em ``config.CORPUS_PARQUET``.

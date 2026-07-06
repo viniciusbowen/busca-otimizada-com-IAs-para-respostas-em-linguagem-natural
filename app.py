@@ -5,32 +5,24 @@ técnica de embedding e de busca, visualizar as sinopses recuperadas e a
 resposta gerada pelo LLM local, além de rodar o benchmark comparativo.
 
 Execução:
-    streamlit run tf/app.py
+    streamlit run app.py
 """
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
-# Garante que a raiz do repositório esteja no sys.path para permitir
-# `from tf import ...` ao rodar via `streamlit run tf/app.py` (o Streamlit
-# coloca apenas a pasta do script, tf/, no path por padrão).
-_PROJECT_ROOT = Path(__file__).resolve().parent.parent
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+import bootstrap  # noqa: F401 — registra o pacote ``busca``
 
 import streamlit as st
 
-from tf import config
-from tf.embeddings.sentence_embed import SentenceEmbedder
-from tf.embeddings.tfidf_embed import TfidfEmbedder
-from tf.embeddings.word2vec_avg import Word2VecAverageEmbedder
-from tf.llm.generator import LocalLLM
-from tf.pipeline import SemanticSearchPipeline
-from tf.search.cosine_search import CosineSearcher
-from tf.search.faiss_search import FaissSearcher
-from tf.search.hnsw_search import HNSWSearcher
+from busca import config
+from busca.embeddings.sentence_embed import SentenceEmbedder
+from busca.embeddings.tfidf_embed import TfidfEmbedder
+from busca.embeddings.word2vec_avg import Word2VecAverageEmbedder
+from busca.llm.generator import LocalLLM
+from busca.pipeline import SemanticSearchPipeline
+from busca.search.cosine_search import CosineSearcher
+from busca.search.faiss_search import FaissSearcher
+from busca.search.hnsw_search import HNSWSearcher
 
 # Mapas de nome -> classe para os seletores da interface. A primeira entrada
 # de cada mapa é o padrão e corresponde ao caminho já integrado ponta a ponta.
@@ -70,7 +62,7 @@ def render_results(response) -> None:
     """Renderiza as sinopses recuperadas e a resposta do LLM.
 
     Args:
-        response: Objeto :class:`tf.pipeline.PipelineResponse`.
+        response: Objeto :class:`busca.pipeline.PipelineResponse`.
     """
     if response.search_query:
         if response.search_query != response.question:

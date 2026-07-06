@@ -12,7 +12,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from tf import config
+from busca import config
 
 # URL de fallback caso o zip não esteja presente localmente. O CMU Movie
 # Summary Corpus é distribuído pela Carnegie Mellon University.

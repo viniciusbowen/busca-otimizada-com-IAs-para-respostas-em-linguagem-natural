@@ -1,7 +1,7 @@
 """Módulos de acesso e preparação do dataset CMU Movie Summary Corpus."""
 
-from tf.data.download import download_dataset, ensure_dataset
-from tf.data.loader import (
+from busca.data.download import download_dataset, ensure_dataset
+from busca.data.loader import (
     build_corpus,
     load_corpus,
     load_metadata,

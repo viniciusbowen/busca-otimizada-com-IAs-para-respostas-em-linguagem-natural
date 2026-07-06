@@ -1,6 +1,6 @@
 """Módulo de benchmark das técnicas de busca semântica."""
 
-from tf.benchmark.evaluator import (
+from busca.benchmark.evaluator import (
     benchmark_searchers,
     measure_query_time,
     precision_at_k,

@@ -12,11 +12,11 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Caminhos
 # ---------------------------------------------------------------------------
-# Diretório raiz do pacote (pasta tf/).
+# Diretório raiz do pacote / repositório.
 BASE_DIR = Path(__file__).resolve().parent
 
-# Diretório raiz do repositório (um nível acima de tf/).
-PROJECT_ROOT = BASE_DIR.parent
+# Raiz do repositório (mesma pasta do pacote ``busca``).
+PROJECT_ROOT = BASE_DIR
 
 # Diretório onde os dados brutos/processados ficam armazenados.
 DATA_DIR = BASE_DIR / "data_files"

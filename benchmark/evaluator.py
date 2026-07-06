@@ -13,7 +13,7 @@ from typing import Sequence
 
 import pandas as pd
 
-from tf.search.base import BaseSearcher, SearchResult
+from busca.search.base import BaseSearcher, SearchResult
 
 
 def precision_at_k(results: Sequence[SearchResult], relevant: set[int], k: int) -> float:

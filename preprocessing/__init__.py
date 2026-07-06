@@ -1,6 +1,6 @@
 """Módulos de pré-processamento textual (NLTK)."""
 
-from tf.preprocessing.text_cleaner import (
+from busca.preprocessing.text_cleaner import (
     normalize,
     preprocess_corpus,
     remove_stopwords,

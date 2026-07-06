@@ -1,5 +1,5 @@
 """Módulo de geração de resposta com LLM local."""
 
-from tf.llm.generator import LocalLLM
+from busca.llm.generator import LocalLLM
 
 __all__ = ["LocalLLM"]

@@ -16,11 +16,11 @@ from typing import Any
 
 import pandas as pd
 
-from tf import config
-from tf.data.loader import load_corpus
-from tf.embeddings.base import BaseEmbedder
-from tf.llm.generator import LocalLLM
-from tf.search.base import BaseSearcher, SearchResult
+from busca import config
+from busca.data.loader import load_corpus
+from busca.embeddings.base import BaseEmbedder
+from busca.llm.generator import LocalLLM
+from busca.search.base import BaseSearcher, SearchResult
 
 
 @dataclass

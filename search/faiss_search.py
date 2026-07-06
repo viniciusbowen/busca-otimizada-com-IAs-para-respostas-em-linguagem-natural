@@ -10,8 +10,8 @@ from typing import Any
 
 import numpy as np
 
-from tf import config
-from tf.search.base import BaseSearcher, SearchResult
+from busca import config
+from busca.search.base import BaseSearcher, SearchResult
 
 
 class FaissSearcher(BaseSearcher):

@@ -35,8 +35,9 @@ geração de texto por um **LLM local**.
 ## Estrutura
 
 ```
-tf/
+busca-otimizada-com-IAs-para-respostas-em-linguagem-natural/
 ├── app.py                # Interface Streamlit (entrypoint)
+├── bootstrap.py          # Registra o alias importável ``busca``
 ├── config.py             # Caminhos, modelos e constantes
 ├── pipeline.py           # Orquestra pergunta -> embedding -> busca -> LLM
 ├── data/
@@ -59,6 +60,9 @@ tf/
     └── evaluator.py      # Tempo, complexidade e qualidade (P@K, R@K, MRR)
 ```
 
+> O código é importado como pacote ``busca`` (abreviação), pois hífens no nome
+> da pasta impedem ``import`` direto pelo nome completo do repositório.
+
 ## Dataset
 
 *CMU Movie Summary Corpus*, composto por:
@@ -67,8 +71,8 @@ tf/
 - `plot_summaries.txt` — sinopses indexadas pelo Wikipedia movie ID.
 
 O arquivo `cmu-movie-summary-corpus.zip` deve estar na raiz do repositório. A
-função `tf.data.download.ensure_dataset()` cuida da extração para
-`tf/data_files/`.
+função `busca.data.download.ensure_dataset()` cuida da extração para
+`data_files/`.
 
 ## Instalação
 
@@ -77,7 +81,7 @@ Requer **Python 3.12**.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r tf/requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Execução
@@ -85,7 +89,7 @@ pip install -r tf/requirements.txt
 A partir da raiz do repositório:
 
 ```bash
-streamlit run tf/app.py
+streamlit run app.py
 ```
 
 ## Tecnologias e licenças

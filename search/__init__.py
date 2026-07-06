@@ -1,9 +1,9 @@
 """Módulos de busca semântica (cosseno exaustivo, FAISS e HNSW)."""
 
-from tf.search.base import BaseSearcher, SearchResult
-from tf.search.cosine_search import CosineSearcher
-from tf.search.faiss_search import FaissSearcher
-from tf.search.hnsw_search import HNSWSearcher
+from busca.search.base import BaseSearcher, SearchResult
+from busca.search.cosine_search import CosineSearcher
+from busca.search.faiss_search import FaissSearcher
+from busca.search.hnsw_search import HNSWSearcher
 
 __all__ = [
     "BaseSearcher",

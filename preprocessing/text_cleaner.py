@@ -11,7 +11,7 @@ from typing import Iterable
 
 import pandas as pd
 
-from tf import config
+from busca import config
 
 
 def normalize(text: str) -> str:
@@ -75,7 +75,7 @@ def preprocess_corpus(corpus: pd.DataFrame, text_column: str = "plot") -> pd.Dat
     """Aplica o pré-processamento à coluna de texto do corpus inteiro.
 
     Args:
-        corpus: DataFrame do corpus (ver :mod:`tf.data.loader`).
+        corpus: DataFrame do corpus (ver :mod:`busca.data.loader`).
         text_column: Nome da coluna com o texto a processar.
 
     Returns:

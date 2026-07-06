@@ -17,8 +17,8 @@ from typing import Iterable
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from tf import config
-from tf.embeddings.base import BaseEmbedder
+from busca import config
+from busca.embeddings.base import BaseEmbedder
 
 
 class TfidfEmbedder(BaseEmbedder):

@@ -1,13 +1,6 @@
-"""Módulos de geração de embeddings (TF-IDF, Word2Vec avg e Sentence Transformers)."""
+"""Módulos de geração de embeddings do projeto."""
 
-from tf.embeddings.base import BaseEmbedder
-from tf.embeddings.sentence_embed import SentenceEmbedder
-from tf.embeddings.tfidf_embed import TfidfEmbedder
-from tf.embeddings.word2vec_avg import Word2VecAverageEmbedder
+from embeddings.base import BaseEmbedder
+from embeddings.sentence_embed import SentenceEmbedder
 
-__all__ = [
-    "BaseEmbedder",
-    "SentenceEmbedder",
-    "TfidfEmbedder",
-    "Word2VecAverageEmbedder",
-]
+__all__ = ["BaseEmbedder", "SentenceEmbedder"]

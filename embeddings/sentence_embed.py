@@ -11,8 +11,8 @@ from typing import Iterable
 
 import numpy as np
 
-from tf import config
-from tf.embeddings.base import BaseEmbedder
+from config import SENTENCE_MODEL_NAME
+from embeddings.base import BaseEmbedder
 
 
 class SentenceEmbedder(BaseEmbedder):
@@ -20,7 +20,7 @@ class SentenceEmbedder(BaseEmbedder):
 
     name = "sentence_embeddings"
 
-    def __init__(self, model_name: str = config.SENTENCE_MODEL_NAME) -> None:
+    def __init__(self, model_name: str = SENTENCE_MODEL_NAME) -> None:
         """Configura o modelo de embeddings.
 
         Args:
@@ -39,18 +39,41 @@ class SentenceEmbedder(BaseEmbedder):
         Returns:
             A própria instância.
         """
-        raise NotImplementedError("Carregar o modelo Sentence Transformers.")
+        from sentence_transformers import SentenceTransformer
+
+        self._model = SentenceTransformer(self.model_name)
+        self._dim = self._model.get_sentence_embedding_dimension()
+        return self
 
     def embed_text(self, text: str) -> np.ndarray:
         """Gera o embedding de um único texto.
 
         Complexidade: O(m) no comprimento do texto (custo do forward do modelo).
         """
-        raise NotImplementedError("Codificar um texto com Sentence Transformers.")
+        if self._model is None:
+            raise RuntimeError("Modelo não carregado; chame fit() primeiro.")
+
+        embedding = self._model.encode(
+            [text],
+            convert_to_numpy=True,
+            normalize_embeddings=False,
+            show_progress_bar=False,
+        )
+        return np.asarray(embedding[0], dtype=np.float32)
 
     def embed_batch(self, texts: Iterable[str]) -> np.ndarray:
         """Gera embeddings para um lote de textos (encode em batch)."""
-        raise NotImplementedError("Codificar textos em lote.")
+        if self._model is None:
+            raise RuntimeError("Modelo não carregado; chame fit() primeiro.")
+
+        documents = [text if isinstance(text, str) else "" for text in texts]
+        embeddings = self._model.encode(
+            documents,
+            convert_to_numpy=True,
+            normalize_embeddings=False,
+            show_progress_bar=False,
+        )
+        return np.asarray(embeddings, dtype=np.float32)
 
     @property
     def dim(self) -> int:

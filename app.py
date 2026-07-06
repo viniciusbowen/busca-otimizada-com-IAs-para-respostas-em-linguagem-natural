@@ -22,28 +22,11 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 import streamlit as st
 
-from tf import config
-from tf.embeddings.sentence_embed import SentenceEmbedder
-from tf.embeddings.tfidf_embed import TfidfEmbedder
-from tf.embeddings.word2vec_avg import Word2VecAverageEmbedder
-from tf.llm.generator import LocalLLM
-from tf.pipeline import SemanticSearchPipeline
-from tf.search.cosine_search import CosineSearcher
-from tf.search.faiss_search import FaissSearcher
-from tf.search.hnsw_search import HNSWSearcher
-
-# Mapas de nome -> classe para os seletores da interface. A primeira entrada
-# de cada mapa é o padrão e corresponde ao caminho já integrado ponta a ponta.
-EMBEDDERS = {
-    "TF-IDF": TfidfEmbedder,
-    "Sentence Embeddings": SentenceEmbedder,
-    "Word2Vec Average": Word2VecAverageEmbedder,
-}
-SEARCHERS = {
-    "Similaridade de Cosseno": CosineSearcher,
-    "FAISS": FaissSearcher,
-    "HNSW": HNSWSearcher,
-}
+import config
+from embeddings.sentence_embed import SentenceEmbedder
+from llm.generator import LocalLLM
+from pipeline import SemanticSearchPipeline
+from search.cosine_search import CosineSearcher
 
 
 @st.cache_resource(show_spinner="Construindo pipeline (corpus + embeddings + LLM)...")
@@ -59,8 +42,8 @@ def build_pipeline(embedder_name: str, searcher_name: str) -> SemanticSearchPipe
     Returns:
         Pipeline pronto para responder consultas.
     """
-    embedder = EMBEDDERS[embedder_name]()
-    searcher = SEARCHERS[searcher_name]()
+    embedder = SentenceEmbedder()
+    searcher = CosineSearcher()
     llm = LocalLLM()
     pipeline = SemanticSearchPipeline(embedder=embedder, searcher=searcher, llm=llm)
     return pipeline.build()
@@ -117,8 +100,8 @@ def main() -> None:
 
     with st.sidebar:
         st.header("Configuração")
-        embedder_name = st.selectbox("Técnica de embedding", list(EMBEDDERS))
-        searcher_name = st.selectbox("Técnica de busca", list(SEARCHERS))
+        st.selectbox("Técnica de embedding", ["Sentence Embeddings"], index=0)
+        st.selectbox("Técnica de busca", ["Similaridade de Cosseno"], index=0)
         top_k = st.slider("Top-K resultados", 1, 20, config.TOP_K)
 
     tab_search, tab_benchmark = st.tabs(["Busca", "Benchmark"])
@@ -129,7 +112,7 @@ def main() -> None:
             placeholder="Ex.: um filme sobre viagem no tempo e paradoxos",
         )
         if st.button("Buscar", type="primary") and question.strip():
-            pipeline = build_pipeline(embedder_name, searcher_name)
+            pipeline = build_pipeline("Sentence Embeddings", "Similaridade de Cosseno")
             response = pipeline.answer(question, top_k=top_k)
             render_results(response)
 

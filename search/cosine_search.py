@@ -1,10 +1,3 @@
-"""Busca exaustiva por similaridade de cosseno.
-
-Baseline simples: compara o vetor da consulta com todos os vetores do
-corpus. Serve de referência de qualidade e de custo para as buscas
-aproximadas (FAISS/HNSW).
-"""
-
 from __future__ import annotations
 
 from typing import Any
@@ -15,9 +8,23 @@ from base import BaseSearcher, SearchResult
 
 EPS = 1e-12
 
+# a similaridade de cosseno entre dois vetores u e v é:
+#
+#       cos(u, v) = (u . v) / (||u|| * ||v||)
+#
+# normalizando os vetores antes da busca : (||u|| = ||v|| = 1)
+# o cálculo se reduz ao produto escalar, o
+# que torna mais eficiente para a busca em um mesmo banco
+
+# analise de complexidade:
+#   1. Normalização da consulta: O(d)
+#   2. Produto escalar consulta x corpus: O(N*d)  
+#   3. Seleção do top-k (argpartition): O(N)
+#   4. Ordenação apenas dos k selecionados: O(k log k)
+
+#   Total por consulta: O(N*d).
 
 class CosineSearcher(BaseSearcher):
-    """Busca exaustiva usando similaridade de cosseno (scikit-learn/NumPy)."""
 
     name = "cosine"
 
@@ -39,10 +46,7 @@ class CosineSearcher(BaseSearcher):
         vectors: np.ndarray,
         metadata: list[dict[str, Any]] | None = None,
     ) -> "CosineSearcher":
-        """Armazena os vetores (opcionalmente normalizados) e metadados.
-
-        Complexidade: O(N*d) para normalização, O(1) sem ela.
-        """
+        
         arr = np.asarray(vectors, dtype=np.float64)
         if arr.ndim != 2:
             raise ValueError(
@@ -50,24 +54,15 @@ class CosineSearcher(BaseSearcher):
                 f"recebido ndim={arr.ndim}."
             )
  
-        norms = np.linalg.norm(arr, axis=1, keepdims=True)  # O(N*d)
-        norms = np.maximum(norms, EPS)                      # protege vetores nulos
-        self._vectors = arr / norms                          # O(N*d)
+        norma = np.linalg.norm(arr, axis=1, keepdims=True)  # O(N*d)
+        norma = np.maximum(norma, EPS)                      # protege vetores nulos
+        self._vectors = arr /norma                          # O(N*d)
         self._metadata = metadata
         self._n_comparisons = 0
         return self
 
     def search(self, query_vector: np.ndarray, top_k: int) -> list[SearchResult]:
-        """Calcula a similaridade de cosseno da consulta contra todo o corpus.
  
-        Passos e custo:
-            1. Normalização da consulta:              O(d)
-            2. Produto escalar consulta x corpus:      O(N*d)  <- domina o custo
-            3. Seleção do top-k (argpartition):        O(N)
-            4. Ordenação apenas dos k selecionados:     O(k log k)
- 
-        Total por consulta: O(N*d).
-        """
         if self._vectors is None:
             raise RuntimeError("Índice não construído: chame `build` antes de `search`.")
  
@@ -83,7 +78,7 @@ class CosineSearcher(BaseSearcher):
             scores = np.zeros(self._vectors.shape[0], dtype=np.float64)
         else:
             q_unit = query / q_norm            # O(d)
-            scores = self._vectors @ q_unit     # O(N*d) -- custo dominante
+            scores = self._vectors @ q_unit     # O(N*d)
  
         self._n_comparisons += self._vectors.shape[0]
  
@@ -100,3 +95,99 @@ class CosineSearcher(BaseSearcher):
             payload = self._metadata[i] if self._metadata is not None else {}
             results.append(SearchResult(index=i, score=float(scores[i]), payload=payload))
         return results
+
+
+if __name__ == "__main__":
+
+    buscador = CosineSearcher()
+
+    print("=" * 60)
+    print("TESTE 1 - Vetor idêntico")
+    print("=" * 60)
+
+    corpus = np.array([
+        [1, 0],
+        [0, 1],
+        [1, 1]
+    ], dtype=float)
+
+    consulta = np.array([1, 0], dtype=float)
+
+    buscador.build(corpus)
+    resultados = buscador.search(consulta, top_k=3)
+
+    for r in resultados:
+        print(f"Índice: {r.index} | Similaridade: {r.score:.4f}")
+
+    print("\nEsperado aproximadamente:")
+    print("Índice 0 -> 1.0000")
+    print("Índice 2 -> 0.7071")
+    print("Índice 1 -> 0.0000")
+
+
+    print("\n" + "=" * 60)
+    print("TESTE 2 - Vetor oposto")
+    print("=" * 60)
+
+    corpus = np.array([
+        [-1, 0],
+        [1, 0]
+    ], dtype=float)
+
+    consulta = np.array([1, 0], dtype=float)
+
+    buscador.build(corpus)
+    resultados = buscador.search(consulta, top_k=2)
+
+    for r in resultados:
+        print(f"Índice: {r.index} | Similaridade: {r.score:.4f}")
+
+    print("\nEsperado aproximadamente:")
+    print("Índice 1 -> 1.0000")
+    print("Índice 0 -> -1.0000")
+
+
+    print("\n" + "=" * 60)
+    print("TESTE 3 - Vetores perpendiculares")
+    print("=" * 60)
+
+    corpus = np.array([
+        [0, 1],
+        [1, 0]
+    ], dtype=float)
+
+    consulta = np.array([1, 0], dtype=float)
+
+    buscador.build(corpus)
+    resultados = buscador.search(consulta, top_k=2)
+
+    for r in resultados:
+        print(f"Índice: {r.index} | Similaridade: {r.score:.4f}")
+
+    print("\nEsperado aproximadamente:")
+    print("Índice 1 -> 1.0000")
+    print("Índice 0 -> 0.0000")
+
+
+    print("\n" + "=" * 60)
+    print("TESTE 4 - Ordenação")
+    print("=" * 60)
+
+    corpus = np.array([
+        [1, 0],
+        [0.9, 0.1],
+        [0, 1]
+    ], dtype=float)
+
+    consulta = np.array([1, 0], dtype=float)
+
+    buscador.build(corpus)
+    resultados = buscador.search(consulta, top_k=3)
+
+    for r in resultados:
+        print(f"Índice: {r.index} | Similaridade: {r.score:.4f}")
+
+    print("\nEsperado aproximadamente:")
+    print("Índice 0 -> 1.0000")
+    print("Índice 1 -> 0.9939")
+    print("Índice 2 -> 0.0000")

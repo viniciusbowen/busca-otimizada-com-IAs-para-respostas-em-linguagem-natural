@@ -37,9 +37,7 @@ class BaseSearcher(ABC):
     @property
     @abstractmethod
     def complexity(self) -> str:
-        """Descrição da complexidade da busca (para o relatório).
-
-        Exemplos: ``"O(N*d)"`` para busca exaustiva, ``"~O(log N)"`` para HNSW.
+        """Descrição da complexidade da busca
         """
         raise NotImplementedError
 

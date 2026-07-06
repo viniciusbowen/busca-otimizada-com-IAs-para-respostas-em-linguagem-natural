@@ -13,7 +13,6 @@ transformers
 
 # Busca semântica e indexação
 faiss-cpu
-hnswlib
 
 # Interface web
 streamlit

@@ -4,9 +4,10 @@ from typing import Any
 
 import numpy as np
 
-from base import BaseSearcher, SearchResult
+from search.base import BaseSearcher, SearchResult
 
 EPS = 1e-12
+
 
 # a similaridade de cosseno entre dois vetores u e v é:
 #
